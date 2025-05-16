@@ -156,12 +156,120 @@ function library.new(library_title, cfg_location)
     uis.InputBegan:Connect(function(key)
         if key.KeyCode ~= Enum.KeyCode.Insert then return end
 
-		ScreenGui.Enabled = not ScreenGui.Enabled
-        menu.open = ScreenGui.Enabled
-
-        while ScreenGui.Enabled do
-            uis.MouseIconEnabled = true
-            rs.RenderStepped:Wait()
+        -- Toggling menu open/closed with animation
+        if menu.open then
+            -- Fade out animation
+            local fadeOutTween = TweenService:Create(
+                ImageLabel, 
+                TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+                {BackgroundTransparency = 1, ImageTransparency = 1}
+            )
+            
+            -- Fade out all children
+            for _, child in pairs(ImageLabel:GetDescendants()) do
+                if child:IsA("TextLabel") or child:IsA("TextButton") or child:IsA("ImageLabel") then
+                    TweenService:Create(
+                        child,
+                        TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+                        {TextTransparency = 1, TextStrokeTransparency = 1, ImageTransparency = 1, BackgroundTransparency = 1}
+                    ):Play()
+                elseif child:IsA("Frame") or child:IsA("ScrollingFrame") then
+                    TweenService:Create(
+                        child,
+                        TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+                        {BackgroundTransparency = 1}
+                    ):Play()
+                end
+            end
+            
+            fadeOutTween:Play()
+            fadeOutTween.Completed:Connect(function()
+                ScreenGui.Enabled = false
+                menu.open = false
+                
+                -- Reset transparencies for next open
+                ImageLabel.BackgroundTransparency = 0
+                ImageLabel.ImageTransparency = 0
+                
+                for _, child in pairs(ImageLabel:GetDescendants()) do
+                    if child:IsA("TextLabel") or child:IsA("TextButton") then
+                        child.TextTransparency = 0
+                        child.TextStrokeTransparency = 1
+                        child.BackgroundTransparency = child.BackgroundTransparency == 1 and 1 or 0
+                    elseif child:IsA("ImageLabel") or child:IsA("ImageButton") then
+                        child.ImageTransparency = 0
+                        child.BackgroundTransparency = child.BackgroundTransparency == 1 and 1 or 0
+                    elseif child:IsA("Frame") or child:IsA("ScrollingFrame") then
+                        child.BackgroundTransparency = child.BackgroundTransparency == 1 and 1 or 0
+                    end
+                end
+            end)
+        else
+            -- Prepare for fade in
+            ImageLabel.BackgroundTransparency = 1
+            ImageLabel.ImageTransparency = 1
+            
+            for _, child in pairs(ImageLabel:GetDescendants()) do
+                if child:IsA("TextLabel") or child:IsA("TextButton") then
+                    child.TextTransparency = 1
+                    child.TextStrokeTransparency = 1
+                    if child.BackgroundTransparency ~= 1 then
+                        child.BackgroundTransparency = 1
+                    end
+                elseif child:IsA("ImageLabel") or child:IsA("ImageButton") then
+                    child.ImageTransparency = 1
+                    if child.BackgroundTransparency ~= 1 then
+                        child.BackgroundTransparency = 1
+                    end
+                elseif child:IsA("Frame") or child:IsA("ScrollingFrame") then
+                    if child.BackgroundTransparency ~= 1 then
+                        child.BackgroundTransparency = 1
+                    end
+                end
+            end
+            
+            ScreenGui.Enabled = true
+            menu.open = true
+            
+            -- Fade in animation
+            local fadeInTween = TweenService:Create(
+                ImageLabel, 
+                TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+                {BackgroundTransparency = 0, ImageTransparency = 0}
+            )
+            
+            -- Fade in all children with slight delay for cascade effect
+            for i, child in pairs(ImageLabel:GetDescendants()) do
+                if child:IsA("TextLabel") or child:IsA("TextButton") then
+                    TweenService:Create(
+                        child,
+                        TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out, 0, false, i * 0.01),
+                        {TextTransparency = 0, TextStrokeTransparency = 1, BackgroundTransparency = child.BackgroundTransparency == 1 and 1 or 0}
+                    ):Play()
+                elseif child:IsA("ImageLabel") or child:IsA("ImageButton") then
+                    TweenService:Create(
+                        child,
+                        TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out, 0, false, i * 0.01),
+                        {ImageTransparency = 0, BackgroundTransparency = child.BackgroundTransparency == 1 and 1 or 0}
+                    ):Play()
+                elseif child:IsA("Frame") or child:IsA("ScrollingFrame") then
+                    TweenService:Create(
+                        child,
+                        TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out, 0, false, i * 0.01),
+                        {BackgroundTransparency = child.BackgroundTransparency == 1 and 1 or 0}
+                    ):Play()
+                end
+            end
+            
+            fadeInTween:Play()
+            
+            -- Enable mouse visibility while menu is open
+            spawn(function()
+                while menu.open do
+                    uis.MouseIconEnabled = true
+                    rs.RenderStepped:Wait()
+                end
+            end)
         end
 	end)
 
