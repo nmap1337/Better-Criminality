@@ -2,7 +2,7 @@
 
 An improved and visually enhanced version of LeadMarker's Criminality UI Library for Roblox. This library provides a sleek, modern interface for creating game GUIs with a comprehensive set of UI components.
 
-![UI Library Preview](https://user-images.githubusercontent.com/83477843/183231408-d00b8f56-ad81-4cd6-a037-85c5703c7b95.png)
+![UI Library Preview](https://github.com/nmap1337/Better-Criminality/blob/main/Assets/menu.png?raw=true)
 
 ## 🌟 Features
 
