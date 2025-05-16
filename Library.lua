@@ -144,7 +144,19 @@ function library.new(library_title, cfg_location)
 		syn.protect_gui(ScreenGui)
 	end
 
-    ScreenGui.Parent = game:GetService("CoreGui")
+    local Cursor = library:create("ImageLabel", {
+        Name = "Cursor",
+        BackgroundTransparency = 1,
+        Size = UDim2.new(0, 17, 0, 17),
+        Image = "rbxassetid://7205257578",
+        ZIndex = 6969,
+    }, ScreenGui)
+
+    rs.RenderStepped:Connect(function()
+        Cursor.Position = UDim2.new(0, mouse.X, 0, mouse.Y + 36)
+    end)
+
+	ScreenGui.Parent = game:GetService("CoreGui")
 
     function menu.IsOpen()
         return menu.open
@@ -177,7 +189,7 @@ function library.new(library_title, cfg_location)
         Modal = true,
         ClipsDescendants = true,
     }, ScreenGui)
-
+    
     local UICorner = library:create("UICorner", {
         CornerRadius = UDim.new(0, 6),
     }, ImageLabel)
@@ -188,15 +200,40 @@ function library.new(library_title, cfg_location)
 
     library:set_draggable(ImageLabel)
 
-        local Title = library:create("TextLabel", {        Name = "Title",        AnchorPoint = Vector2.new(0.5, 0),        BackgroundColor3 = Color3.fromRGB(255, 255, 255),        BackgroundTransparency = 1,        Position = UDim2.new(0.5, 0, 0, 0),        Size = UDim2.new(1, -22, 0, 30),        Font = Enum.Font.Ubuntu,        Text = library_title,        TextColor3 = Color3.fromRGB(255, 255, 255),        TextSize = 16,        TextXAlignment = Enum.TextXAlignment.Left,        RichText = true,    }, ImageLabel)
+    local Title = library:create("TextLabel", {
+        Name = "Title",
+        AnchorPoint = Vector2.new(0.5, 0),
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0.5, 0, 0, 0),
+        Size = UDim2.new(1, -22, 0, 30),
+        Font = Enum.Font.Ubuntu,
+        Text = library_title,
+        TextColor3 = Color3.fromRGB(255, 255, 255),
+        TextSize = 16,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        RichText = true,
+    }, ImageLabel)
 
-        local TabButtons = library:create("Frame", {        Name = "TabButtons",        BackgroundColor3 = Color3.fromRGB(255, 255, 255),        BackgroundTransparency = 1,        Position = UDim2.new(0, 12, 0, 41),        Size = UDim2.new(0, 76, 0, 447),    }, ImageLabel)
+    local TabButtons = library:create("Frame", {
+        Name = "TabButtons",
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 12, 0, 41),
+        Size = UDim2.new(0, 76, 0, 447),
+    }, ImageLabel)
     
     local UIListLayout = library:create("UIListLayout", {
         HorizontalAlignment = Enum.HorizontalAlignment.Center
     }, TabButtons)
 
-        local Tabs = library:create("Frame", {        Name = "Tabs",        BackgroundColor3 = Color3.fromRGB(255, 255, 255),        BackgroundTransparency = 1,        Position = UDim2.new(0, 102, 0, 42),        Size = UDim2.new(0, 586, 0, 446),    }, ImageLabel)
+    local Tabs = library:create("Frame", {
+        Name = "Tabs",
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 102, 0, 42),
+        Size = UDim2.new(0, 586, 0, 446),
+    }, ImageLabel)
 
 	if syn then
     local GetName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId)
